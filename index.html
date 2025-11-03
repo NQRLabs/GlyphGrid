@@ -1,6 +1,35 @@
 <!doctype html>
 <html lang="en" data-bs-theme="dark">
 <head>
+  <!--
+    MIT License
+
+    Copyright (c) 2025 NQR
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+  -->
+<!-- Favicons (browser tabs, bookmarks) -->
+<link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png">
+  
+<!-- iOS & iPadOS (home screen icon when �Add to Home Screen�) -->
+<link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon-180x180.png">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>GlyphGrid · the manual cryptogram workbench</title>
@@ -10,10 +39,10 @@
   <style>
     :root{
       --gg-bg:#0c1020;
-      --gg-card:#121735;
+      --gg-card:#151c3b;
       --gg-ink:#eef1ff;
       --gg-ink-dim:#b9c6ef;
-      --gg-accent:#7cc9ff;
+      --gg-accent:#1fc9aa;
       --gg-outline:#86a6ff;
       --gg-border:#2b3868;
       --cipher-font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
@@ -27,16 +56,6 @@
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       overflow-x: hidden;
-    }
-    /* Fixed gradient background (non-tiled) */
-    body::before{
-      content:"";
-      position:fixed; inset:0; z-index:-1; pointer-events:none;
-      background:
-        radial-gradient(1200px 600px at 12% -10%, #273056 0%, rgba(23,26,38,0) 60%),
-        radial-gradient(1200px 600px at 88% 110%, #1f2648 0%, rgba(23,26,38,0) 55%);
-      background-repeat:no-repeat;
-      background-attachment: fixed;
     }
 
     .gg-card{
@@ -130,25 +149,117 @@
     .panel-title{ margin:0; font-size:1rem; }
     .badge-soft{ background:#1b2149; color:#a6b6f0; }
 
+    /* FOOTER / LICENSE (from template) */
+    .license-footer {
+      margin-top: 30px;
+      margin-bottom: 20px;
+      padding: 10px 8px;
+      font-size: 0.68rem;
+      color: var(--dim);
+      opacity: 0.7;
+      cursor: pointer;
+      transition: opacity 0.15s ease;
+      text-align: center;
+    }
+    
+    .license-footer:hover {
+      opacity: 1;
+    }
+    
+    .license-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 999;
+    }
+    
+    .license-modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--gg-card);
+      border: 2px solid var(--gg-border);
+      border-radius: 12px;
+      padding: 20px;
+      max-width: 520px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,.6);
+      z-index: 1000;
+    }
+    
+    .license-modal.show,
+    .license-overlay.show {
+      display: block;
+    }
+    
+    .license-modal-header {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding-right: 32px;
+      gap: 12px;
+    }
+    
+    .license-modal-title {
+      margin: 0;
+      font-size: 1rem;
+      text-align: center;
+      width: 100%;
+    }
+    
+    .license-modal-close {
+      position: absolute;
+      top: 0;
+      right: 0;
+      cursor: pointer;
+      font-size: 1.5rem;
+      color: var(--gg-ink-dim);
+      line-height: 1;
+    }
+    
+    .small-muted {
+      color: var(--gg-ink-dim);
+      font-size: 0.7rem;
+    }
+
+    .app-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 20px 12px 12px;
+    }
+    .app-logo { 
+      max-width: 500px; 
+      height: auto; 
+      object-fit: contain; 
+    }
+    .app-title { 
+      font-size: 1.8rem; 
+      margin: 2px 0 0; 
+      font-weight: 600; 
+      letter-spacing: .25px; 
+    }
+    .app-subtitle { 
+      color: var(--dim); 
+      font-size: .9rem; 
+      font-style: italic; 
+      margin: 0 0 2px; 
+    }
+
   </style>
 </head>
 <body>
-  <!-- NAV -->
-  <nav class="navbar navbar-expand-md bg-body-tertiary sticky-top border-bottom border-dark-subtle">
-    <div class="container-lg">
-      <a class="navbar-brand fw-bold" href="#">GlyphGrid</a>
-      <span class="navbar-text small text-secondary ms-1">the manual cryptogram workbench</span>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navc" aria-controls="navc" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div id="navc" class="collapse navbar-collapse">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><button class="btn btn-outline-info ms-md-2" id="btnToggleHintsNav">Hints</button></li>
-          <li class="nav-item ms-2"><button class="btn btn-outline-info" id="btnToggleAnalysisNav">Analysis</button></li>
-        </ul>
-      </div>
-    </div>
-  </nav>
+  <header class="app-header">
+    <img src="./assets/images/logo.png" alt="App Logo" class="app-logo">
+    <p class="app-subtitle">A manual cryptogram workbench by NQR</p>
+  </header>
 
   <main class="container-lg my-4">
     <!-- Use My Plaintext -->
@@ -191,6 +302,10 @@
     <section class="gg-card p-3 mb-3" id="alphabetCard" aria-labelledby="alphabetTitle">
       <div class="d-flex align-items-center gap-2 pb-2 border-bottom gg-border">
         <span class="badge rounded-pill gg-badge" id="alphabetTitle">Cleartext Alphabet • Used vs. Unused</span>
+        <div class="ms-auto d-flex gap-2 flex-wrap">
+          <button class="btn btn-outline-info btn-sm" id="btnToggleHintsNav">Hints</button>
+          <button class="btn btn-outline-info btn-sm" id="btnToggleAnalysisNav">Analysis</button>
+        </div>
       </div>
       <div class="alphabet pt-3" id="alphabetRow" aria-live="polite"></div>
     </section>
@@ -289,6 +404,66 @@
     <p class="text-secondary small mb-5">Note: Everything happens locally in your browser.</p>
     
   </main>
+
+<!-- FOOTER / LICENSE (from template) -->
+<footer class="license-footer" id="licenseLink">
+  MIT License • Developed by NQR • Click to view
+</footer>
+
+<div class="license-overlay" id="licenseOverlay"></div>
+<div class="license-modal" id="licenseModal" role="dialog" aria-modal="true" aria-labelledby="licenseTitle">
+  <div class="license-modal-header">
+    <h3 class="license-modal-title" id="licenseTitle">MIT License</h3>
+    <span class="license-modal-close" id="licenseClose" aria-label="Close license dialog">&times;</span>
+  </div>
+  <pre class="small-muted" style="text-align:center; white-space:pre-wrap; margin-top:14px;">
+MIT License
+
+Copyright (c) 2025 NQR
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included
+in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+  </pre>
+</div>
+
+<script>
+
+// License modal behavior (from template)
+const licenseLink = document.getElementById('licenseLink');
+const licenseOverlay = document.getElementById('licenseOverlay');
+const licenseModal = document.getElementById('licenseModal');
+const licenseClose = document.getElementById('licenseClose');
+
+function openLicense() {
+  licenseOverlay.classList.add('show');
+  licenseModal.classList.add('show');
+}
+
+function closeLicense() {
+  licenseOverlay.classList.remove('show');
+  licenseModal.classList.remove('show');
+}
+
+licenseLink.addEventListener('click', openLicense);
+licenseOverlay.addEventListener('click', closeLicense);
+licenseClose.addEventListener('click', closeLicense);
+</script>
+
 
   <!-- Floating Analysis Panel (non-blocking) -->
   <div id="panelAnalysis" class="panel-float" aria-live="polite" aria-label="Ciphertext analysis">
