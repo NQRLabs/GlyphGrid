@@ -35,7 +35,7 @@
   <title>GlyphGrid · the manual cryptogram workbench</title>
   <meta name="description" content="A beautiful, manual-first cryptogram workbench with one-to-one mapping, live n-gram analysis, and handy English frequency hints.">
   <!-- Bootstrap 5.3 -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="./assets/css/bootstrap.min.css" rel="stylesheet">
   <style>
     :root{
       --gg-bg:#0c1020;
@@ -101,7 +101,7 @@
     .under{ font-size: .7rem; letter-spacing: .2rem; color:#a9b8ef; }
     .cipher-char{ color:#a9b8ef; font-family: var(--cipher-font); }
 
-    @media (max-width: 768px){
+    @media (max-width: 600px){
       .slot{ width:38px; height:48px; font-size: 20px; }
     }
 
@@ -236,6 +236,7 @@
       padding: 20px 12px 12px;
     }
     .app-logo { 
+      width: 100%;
       max-width: 450px; 
       height: auto; 
       object-fit: contain; 
@@ -257,16 +258,17 @@
 </head>
 <body>
   <header class="app-header">
-    <img src="./assets/images/logo.png" alt="App Logo" class="app-logo">
+    <img src="./assets/images/logo.png" alt="GlyphGrid Logo" class="app-logo">
     <p class="app-subtitle">A manual cryptogram workbench by NQR</p>
   </header>
 
   <main class="container-lg my-4">
-    <!-- Use My Plaintext -->
+    <!-- Plaintext -->
     <section class="gg-card p-3 mb-3" id="ownCard" aria-labelledby="ownTitle">
-      <div class="d-flex align-items-center gap-2 pb-2 border-bottom gg-border">
-        <span class="badge rounded-pill gg-badge" id="ownTitle">Use My Plaintext</span>
+      <div class="d-flex align-items-center pb-2 border-bottom gg-border">
+        <span class="badge rounded-pill gg-badge" id="ownTitle">Plaintext</span>
         <div class="ms-auto d-flex gap-2">
+          <button id="btnAnswer" class="btn btn-outline-success ms-2">Answer</button>
           <button id="btnEncryptMine" class="btn btn-primary">Encrypt my text</button>
         </div>
       </div>
@@ -277,7 +279,7 @@
 
     <!-- Generator -->
     <section class="gg-card p-3 mb-3" id="makerCard" aria-labelledby="makerTitle">
-      <div class="d-flex align-items-center gap-2 pb-2 border-bottom gg-border">
+      <div class="d-flex align-items-center">
         <span class="badge rounded-pill gg-badge" id="makerTitle">Make a Cryptogram</span>
         <div class="ms-auto d-flex flex-wrap gap-2 align-items-center">
           <div class="d-flex align-items-center gap-1">
@@ -293,7 +295,6 @@
             </select>
           </div>
           <button id="btnSurprise" class="btn btn-success btn-sm">Surprise me</button>
-          <button id="btnNewKey" class="btn btn-outline-light btn-sm" title="Same hidden text, different key">New key</button>
         </div>
       </div>
     </section>
@@ -393,6 +394,12 @@
     <section class="gg-card p-3 mb-4" aria-labelledby="keyTitle">
       <div class="d-flex align-items-center gap-2 pb-2 border-bottom gg-border">
         <span class="badge rounded-pill gg-badge" id="keyTitle">Current Key</span>
+        <div class="ms-auto d-flex gap-2 flex-wrap">
+          <button id="btnSaveCleartext" class="btn btn-success btn-sm">Save cleartext</button>
+          <button id="btnSaveKey" class="btn btn-success btn-sm">Save current key</button>
+          <button id="btnLoadKey" class="btn btn-success btn-sm">Load key</button>
+          <input type="file" id="keyFileInput" accept=".txt" style="display:none;">
+        </div>
       </div>
       <div class="pt-3">
         <div class="text-secondary small mb-2">Cipher → Plain</div>
@@ -589,9 +596,6 @@ licenseClose.addEventListener('click', closeLicense);
     </div>
   </div>
 
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
   <script>
   "use strict";
   const A = "A".charCodeAt(0);
@@ -603,11 +607,12 @@ licenseClose.addEventListener('click', closeLicense);
     mapping: Object.fromEntries(letters.map(l=>[l, null])),
     reverse: Object.fromEntries(letters.map(l=>[l, null])),
     cipherText: "",
-    _hiddenPlaintext: null,
+    _hiddenPlaintext:"My voice is my passport. Verify me.",
     _activeKey: null,
     _seed: null,
     highlights: { bigrams:false, trigrams:false, doubles:false, len1:false, len2:false, len3:false },
-    analysisOpen:false
+    analysisOpen:false,
+    solved: false
   };
 
   const els = {
@@ -618,7 +623,7 @@ licenseClose.addEventListener('click', closeLicense);
     makeTheme: document.getElementById('makeTheme'),
     makeDiff: document.getElementById('makeDiff'),
     btnSurprise: document.getElementById('btnSurprise'),
-    btnNewKey: document.getElementById('btnNewKey'),
+    btnAnswer: document.getElementById('btnAnswer'),
     // Solver
     alphabetRow: document.getElementById('alphabetRow'),
     cipherInput: document.getElementById('cipherInput'),
@@ -664,10 +669,8 @@ licenseClose.addEventListener('click', closeLicense);
 
   function updateButtons(){
     const canRekeyStored = !!state._hiddenPlaintext;
-    els.btnNewKey.disabled = !canRekeyStored;
     els.btnNewKeySolver.disabled = !canRekeyStored;
-    els.btnNewKey.title = canRekeyStored ? "Same hidden text, different key" : "Disabled: no active plaintext";
-    els.btnNewKeySolver.title = els.btnNewKey.title;
+    els.btnNewKeySolver.title = canRekeyStored ? "Same hidden text, different key" : "Disabled: no active plaintext";
   }
 
   /* ---------- Alphabet & Key ---------- */
@@ -730,6 +733,7 @@ licenseClose.addEventListener('click', closeLicense);
           } else if(e.inputType && e.inputType.startsWith('delete')){
             e.preventDefault(); assignMapping(cipher,null); refreshAll(); refocus(here);
           }
+          checkIfSolved();
         });
         cell.appendChild(slot);
         const under=document.createElement('div'); under.className='under cipher-char'; under.textContent=cipher; cell.appendChild(under);
@@ -1693,7 +1697,7 @@ licenseClose.addEventListener('click', closeLicense);
   function encryptUpper(plaintext,key){
     let out=''; for(const ch of plaintext){ if(/[A-Za-z]/.test(ch)){ const u=ch.toUpperCase(); out += key[u] || u; } else out+=ch; } return out;
   }
-  function clearMappings(){ for(const l of letters){ state.mapping[l]=null; state.reverse[l]=null; } setAlphabetUsed(); renderKey(); document.querySelectorAll('.slot[data-cipher]').forEach(el=>el.textContent=''); }
+  function clearMappings(){ for(const l of letters){ state.mapping[l]=null; state.reverse[l]=null; } setAlphabetUsed(); renderKey(); document.querySelectorAll(SLOT_SELECTOR).forEach(el=>el.textContent=''); }
 
   function surpriseGenerate(){
     const theme=els.makeTheme.value||'random';
@@ -1705,6 +1709,12 @@ licenseClose.addEventListener('click', closeLicense);
     state._hiddenPlaintext=plaintext; state._activeKey=key; state._seed=Math.floor(Math.random()*2**31); updateButtons();
     showToast("New cryptogram generated");
   }
+
+  function surpriseAnswer() {
+    if (!state._hiddenPlaintext) { showToast("Error!<p></p>User changed cipher text. Answer Unknown"); return; }
+    els.myPlaintext.value = state._hiddenPlaintext;
+  }
+
   function rekeySamePlaintext(){
     if(!state._hiddenPlaintext){ updateButtons(); return; }
     const diff=els.makeDiff.value||'medium';
@@ -1712,6 +1722,7 @@ licenseClose.addEventListener('click', closeLicense);
     const cipher=encryptUpper(state._hiddenPlaintext,key);
     state.cipherText=cipher; els.cipherInput.value=cipher; clearMappings(); buildSlots(); refreshAll();
     state._activeKey=key; state._seed=Math.floor(Math.random()*2**31); updateButtons();
+    state.solved=false;
     showToast("Key reshuffled");
   }
   function encryptMyText(){
@@ -1722,6 +1733,7 @@ licenseClose.addEventListener('click', closeLicense);
     const cipher=encryptUpper(pt,key);
     state.cipherText=cipher; els.cipherInput.value=cipher; clearMappings(); buildSlots(); refreshAll();
     state._hiddenPlaintext=pt; state._activeKey=key; state._seed=Math.floor(Math.random()*2**31); updateButtons();
+    state.solved=false;
     showToast("Your plaintext was encrypted");
   }
 
@@ -1737,6 +1749,37 @@ licenseClose.addEventListener('click', closeLicense);
     document.querySelectorAll(SLOT_SELECTOR).forEach(el=>{ const c=el.dataset.cipher; el.textContent=state.mapping[c]||''; });
     setAlphabetUsed(); renderKey(); applyHighlights(); if(state.analysisOpen) runAnalysis();
   }
+
+  /* ---------- Check to see if user has solved the cryptogram ---------- */
+  function checkIfSolved() {
+    // If state.solved=true, then the user has already been congratulated
+    if (state.solved) return;
+    // Collect all slots that correspond to cipher letters
+    const slots = Array.from(document.querySelectorAll(SLOT_SELECTOR));
+    if (!slots.length) return;
+  
+    // If any slot is empty, don’t bother checking
+    const allFilled = slots.every(slot => slot.textContent.trim().length === 1);
+    if (!allFilled) return;
+  
+    // Combine all plaintext letters (uppercase only)
+    const userPlaintext = slots.map(s => (s.textContent || '').toUpperCase()).join('');
+  
+    // Clean version of the hidden plaintext (letters only, uppercase)
+    const targetPlaintext = (state._hiddenPlaintext || '')
+      .toUpperCase()
+      .replace(/[^A-Z]/g, '');
+  
+    // Clean the user's plaintext too (remove non-letters)
+    const userPlain = userPlaintext.replace(/[^A-Z]/g, '');
+  
+    // Compare and show popup if they match
+    if (userPlain === targetPlaintext) {
+      showToast("🎉 Congratulations! 🎉<p></p>You solved the cryptogram correctly!");
+      state.solved=true;
+    }
+  }
+
 
   /* ---------- Analysis & Highlights ---------- */
   function getLetterSlots(){
@@ -1969,7 +2012,7 @@ licenseClose.addEventListener('click', closeLicense);
   document.addEventListener('keydown', (e)=>{
     const active=document.activeElement;
     if(active && active.classList.contains('slot')){
-      if(e.key==='ArrowLeft' || e.key==='ArrowRight'){ e.preventDefault(); focusRelativeSlot(e.key==='ArrowRight'?1:-1); return; }
+      if(e.key==='ArrowLeft' || e.key==='ArrowRight'){ e.preventDefault(); focusRelativeSlot(e.key==='ArrowRight'?1:-1); checkIfSolved(); return; }
     }
     if(active && active.classList.contains('slot') && active.dataset.cipher){
       if(e.key.length===1 && /[a-zA-Z ]/.test(e.key)){
@@ -1980,7 +2023,89 @@ licenseClose.addEventListener('click', closeLicense);
       if(e.key==='Backspace' || e.key==='Delete'){ const cipher=active.dataset.cipher; assignMapping(cipher,null); refreshAll(); refocus(active); e.preventDefault(); }
     }
   });
+  // --- Save cleartext & key functions ---
+  function downloadTextFile(filename, text) {
+    const blob = new Blob([text], { type: 'text/plain' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+  
+  document.getElementById('btnSaveCleartext').addEventListener('click', () => {
+    // Select all slots, including spaces and punctuation
+    const slots = document.querySelectorAll('.slot');
+    let cleartext = '';
 
+    slots.forEach(slot => {
+      const symbol = slot.dataset.cipher;
+      const plain = slot.textContent.trim();
+
+      // If it's a space or punctuation slot, include it as-is
+      if (symbol === ' ' || /[.,!?;:'"()\-\n]/.test(symbol)) {
+        cleartext += symbol;
+      } else if (plain) {
+        cleartext += plain;
+      } else {
+        // If user hasn't filled this slot, use underscore or space
+        cleartext += ' ';
+      }
+    });
+
+    downloadTextFile('message.txt', cleartext);
+  });
+
+  document.getElementById('btnSaveKey').addEventListener('click', () => {
+    let lines = ['Cipher text symbol = Clear text symbol'];
+    for (const [cipher, plain] of Object.entries(state.mapping)) {
+      if (plain) lines.push(`${cipher} = ${plain}`);
+    }
+    downloadTextFile('key.txt', lines.join('\n'));
+  });
+
+  // --- Load key ---
+  document.getElementById('btnLoadKey').addEventListener('click', () => {
+    document.getElementById('keyFileInput').click();
+  });
+  
+  document.getElementById('keyFileInput').addEventListener('change', function() {
+    const file = this.files[0];
+    if (!file) return;
+  
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const lines = e.target.result.split('\n');
+      const mapping = {};
+  
+      // Parse key.txt lines, ignoring the header
+      lines.forEach(line => {
+        const match = line.match(/^\s*([A-Za-z])\s*=\s*([A-Za-z])\s*$/);
+        if (match) {
+          const cipher = match[1].toUpperCase();
+          const plain = match[2].toUpperCase();
+          mapping[cipher] = plain;
+        }
+      });
+  
+      // Apply mapping to existing slots
+      const slots = document.querySelectorAll(SLOT_SELECTOR);
+      slots.forEach(slot => {
+        const cipher = slot.dataset.cipher.toUpperCase();
+        if (mapping[cipher]) {
+          slot.textContent = mapping[cipher];
+          state.mapping[cipher] = mapping[cipher];
+          renderKey();
+        }
+      });
+  
+      alert('Key loaded and applied!');
+    };
+  
+    reader.readAsText(file);
+  });
+
+  
   // Font controls
   try{ const savedFont=localStorage.getItem('cipherFont'); if(savedFont) setCipherFont(savedFont);}catch(e){}
   els.fontSelect.addEventListener('change', ()=>{ const val=els.fontSelect.value; if(val==='__custom__'){ const custom=els.fontCustom.value.trim(); if(custom) setCipherFont(custom); } else setCipherFont(val); });
@@ -2025,9 +2150,9 @@ bindHighlightToggle(els.chkLen3, 'len3');
 
   // Generator buttons
   els.btnSurprise.addEventListener('click', surpriseGenerate);
-  els.btnNewKey.addEventListener('click', rekeySamePlaintext);
   els.btnNewKeySolver.addEventListener('click', rekeySamePlaintext);
   els.btnEncryptMine.addEventListener('click', encryptMyText);
+  els.btnAnswer.addEventListener('click', surpriseAnswer);
 
   // Toast helper
   function showToast(msg){
@@ -2039,7 +2164,7 @@ bindHighlightToggle(els.chkLen3, 'len3');
     toast.setAttribute('role', 'status');
     toast.innerHTML = '<div class="d-flex"><div class="toast-body">'+msg+'</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button></div>';
     wrap.appendChild(toast); document.body.appendChild(wrap);
-    setTimeout(()=>{ toast.classList.remove('show'); wrap.remove(); }, 1400);
+    setTimeout(()=>{ toast.classList.remove('show'); wrap.remove(); }, 2800);
   }
 
   // Init
