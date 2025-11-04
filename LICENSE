@@ -19,3 +19,28 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+------------------------------------------------------------
+Third-Party Components
+------------------------------------------------------------
+
+This project uses the following open-source resources,
+each distributed under permissive licenses compatible with the MIT License:
+
+- Bootstrap © Twitter, Inc. and contributors  
+  Distributed under the MIT License  
+  https://github.com/twbs/bootstrap/blob/main/LICENSE
+
+- Google Fonts (Noto family, optional) © Google  
+  Licensed under the SIL Open Font License 1.1  
+  https://scripts.sil.org/OFL  
+  https://fonts.google.com/specimen/Noto+Sans
+
+- FontFace API usage examples © Mozilla Contributors  
+  Licensed under the CC-BY-SA 2.5 License  
+  https://developer.mozilla.org/en-US/docs/Web/API/FontFace  
+  https://creativecommons.org/licenses/by-sa/2.5/
+
+All third-party components are unmodified and used only for interface
+styling, typography, or documentation reference. These components are
+fully compatible with this project’s MIT License.
