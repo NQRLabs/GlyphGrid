@@ -65,9 +65,18 @@ MIT License — free for modification and use. Attribution appreciated if used p
 
 GlyphGrid uses the following open-source resources under the MIT License:
 
-- [Bootstrap](https://getbootstrap.com) — © Twitter, Inc. and contributors  
 - [Google Fonts (Noto, optional)](https://fonts.google.com) — © Google  
 - [FontFace API examples](https://developer.mozilla.org/en-US/docs/Web/API/FontFace) — MDN Web Docs  
+
+### Third-Party Components (vendored)
+
+GlyphGrid includes a local copy of **Bootstrap v5.3.3 (CSS only)** — MIT License  
+© 2011–2024 The Bootstrap Authors and Twitter, Inc.  
+Project: https://getbootstrap.com/  
+Source code: https://github.com/twbs/bootstrap  
+Vendored file: `assets/css/bootstrap.min.css`  
+Vendored from: https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css (retrieved 2025-11-04)  
+License file: `vendor-licenses/bootstrap.LICENSE`
 
 All components are MIT-compatible and operate fully client-side.
 
