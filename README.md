@@ -4,6 +4,8 @@
 
 **GlyphGrid** is a manual cryptogram workbench built for solvers, puzzle designers, and ARG creators. It provides a hands-on interface for exploring letter substitutions, enforcing one-to-one mappings, and analyzing ciphertext patterns — all locally in your browser.
 
+[**View Live Demo**](nqrlabs.com/GlyphGrid/)
+
 ## Overview
 
 GlyphGrid combines the tactile logic of pen-and-paper solving with the convenience of digital tools. Paste or generate ciphertext, map letters using your keyboard, and watch updates ripple through every instance automatically.  
