@@ -122,6 +122,8 @@
     }
     .slot[contenteditable="true"]:focus{ border-color: var(--gg-outline); box-shadow: 0 0 0 .25rem rgba(134,166,255,.25); }
     .slot.same-c{ box-shadow: inset 0 0 0 2px var(--gg-outline); }
+    .slot.same-p{ box-shadow: inset 0 0 0 2px #67f5a8; }
+    .slot.same-c.same-p{ box-shadow: inset 0 0 0 2px var(--gg-outline), inset 0 0 0 4px #67f5a8; }
     .slot.lock{ opacity:.85; font-family: inherit; color:#e6ebff; }
     .under{ font-size: .7rem; letter-spacing: .2rem; color:#a9b8ef; }
     .cipher-char{ color:#a9b8ef; font-family: var(--cipher-font); }
@@ -287,6 +289,13 @@
   <header class="app-header">
     <img src="./assets/images/logo.png" alt="GlyphGrid Logo" class="app-logo">
     <p class="app-subtitle">A manual cryptogram workbench by NQR</p>
+    <button id="btnShowHelp" class="btn btn-sm btn-outline-info" style="margin-top: -4px;">
+      <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="margin-bottom: 2px;">
+        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+        <path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/>
+      </svg>
+      Help & Guide
+    </button>
   </header>
 
   <main class="container-lg my-4">
@@ -331,6 +340,7 @@
       <div class="d-flex align-items-center gap-2 pb-2 border-bottom gg-border">
         <span class="badge rounded-pill gg-badge" id="alphabetTitle">Cleartext Alphabet • Used vs. Unused</span>
         <div class="ms-auto d-flex gap-2 flex-wrap">
+          <button class="btn btn-outline-info btn-sm" id="btnHelp">Help</button>
           <button class="btn btn-outline-info btn-sm" id="btnToggleHintsNav">Hints</button>
           <button class="btn btn-outline-info btn-sm" id="btnToggleAnalysisNav">Analysis</button>
         </div>
@@ -348,6 +358,12 @@
           <div class="row g-2 align-items-center">
             <div class="col-12 col-md-auto">
               <button id="btnNewKeySolver" class="btn btn-outline-light btn-sm w-100" title="Same hidden text, different key">New key</button>
+            </div>
+            <div class="col-12 col-md-auto">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="chkExtendedCharset">
+                <label class="form-check-label small" for="chkExtendedCharset">Use Extended Character Set</label>
+              </div>
             </div>
             <div class="col-12 col-md-auto">
               <div class="d-flex align-items-center gap-1">
@@ -492,8 +508,183 @@ The full license text is included with this app at:
 
 No modifications have been made to the Bootstrap CSS except for local hosting and version pinning.
 
-All third-party components are unmodified and used only for interface styling, typography, or documentation reference. These components are fully compatible with this project’s MIT License.
+All third-party components are unmodified and used only for interface styling, typography, or documentation reference. These components are fully compatible with this project's MIT License.
   </pre>
+</div>
+
+<!-- HELP MODAL -->
+<div class="license-overlay" id="helpOverlay"></div>
+<div class="license-modal" id="helpModal" role="dialog" aria-modal="true" aria-labelledby="helpTitle" style="max-width: 720px;">
+  <div class="license-modal-header">
+    <h3 class="license-modal-title" id="helpTitle">GlyphGrid Help & Guide</h3>
+    <span class="license-modal-close" id="helpClose" aria-label="Close help dialog">&times;</span>
+  </div>
+  <div class="small-muted" style="padding: 20px; text-align: left; max-height: 70vh; overflow-y: auto;">
+
+    <h4 style="color: var(--gg-accent); margin-top: 0;">What is GlyphGrid?</h4>
+    <p>
+      <strong>GlyphGrid</strong> is a manual cryptogram workbench designed for solving and creating substitution ciphers.
+      It's perfect for puzzle enthusiasts, ARG (Alternate Reality Game) players, cipher font users, and anyone who enjoys
+      the art of decoding secret messages.
+    </p>
+    <p>
+      Everything runs <strong>100% locally in your browser</strong> — no data is uploaded, tracked, or stored on any server.
+      Your puzzles and solutions remain completely private.
+    </p>
+
+    <h4 style="color: var(--gg-accent); margin-top: 20px;">How to Use GlyphGrid</h4>
+
+    <h5 style="color: var(--gg-ink); margin-top: 16px;">🔹 Solving a Cryptogram</h5>
+    <ol style="margin-left: 0; padding-left: 20px;">
+      <li><strong>Paste ciphertext</strong> into the "Ciphertext" section, or click <strong>"Surprise me"</strong> to generate a random puzzle.</li>
+      <li><strong>Click on any cipher slot</strong> to start typing your guess. Type A-Z to map that cipher symbol to a plaintext letter.</li>
+      <li><strong>Mappings update everywhere</strong> — all instances of that cipher symbol change at once.</li>
+      <li>Use <strong>arrow keys (← / →)</strong> to move between slots quickly.</li>
+      <li>Press <strong>Space, Backspace, or Delete</strong> to clear a mapping.</li>
+      <li><strong>Toggle highlights</strong> (bigrams, trigrams, doubles, word lengths) to spot patterns.</li>
+      <li>Open <strong>"Analysis"</strong> to see frequency tables and n-grams, or <strong>"Hints"</strong> for English letter frequencies.</li>
+      <li>When solved, you'll see a congratulations message!</li>
+    </ol>
+
+    <h5 style="color: var(--gg-ink); margin-top: 16px;">🔹 Creating a Cryptogram</h5>
+    <ol style="margin-left: 0; padding-left: 20px;">
+      <li><strong>Type your plaintext</strong> in the "Plaintext" section.</li>
+      <li>Click <strong>"Encrypt my text"</strong> to generate a cryptogram from your message.</li>
+      <li>The ciphertext appears below, ready to share or solve.</li>
+      <li>Click <strong>"Answer"</strong> to reveal your original plaintext.</li>
+    </ol>
+
+    <h5 style="color: var(--gg-ink); margin-top: 16px;">🔹 Saving & Loading Keys</h5>
+    <ul style="margin-left: 0; padding-left: 20px;">
+      <li><strong>Save current key</strong> — Export your cipher-to-plaintext mappings as a <code>.txt</code> file.</li>
+      <li><strong>Load key</strong> — Import a previously saved key to continue solving or verify a solution.</li>
+      <li><strong>Save cleartext</strong> — Export the solved plaintext once you've completed the puzzle.</li>
+    </ul>
+
+    <h4 style="color: var(--gg-accent); margin-top: 20px;">Use Cases</h4>
+
+    <h5 style="color: var(--gg-ink); margin-top: 16px;">🎯 For Puzzle Enthusiasts</h5>
+    <ul style="margin-left: 0; padding-left: 20px;">
+      <li>Solve daily cryptograms from newspapers or puzzle books</li>
+      <li>Practice pattern recognition and letter frequency analysis</li>
+      <li>Create custom puzzles for friends or puzzle clubs</li>
+      <li>Learn cryptanalysis techniques in a hands-on way</li>
+    </ul>
+
+    <h5 style="color: var(--gg-ink); margin-top: 16px;">🎮 For ARG Players</h5>
+    <ul style="margin-left: 0; padding-left: 20px;">
+      <li>Decode secret messages hidden in ARG clues</li>
+      <li>Solve ciphers found in images, videos, or audio spectrograms</li>
+      <li>Work collaboratively — share ciphertext and partial keys with teammates</li>
+      <li>Handle unusual cipher fonts with mixed case and symbols (see Extended Character Set below)</li>
+    </ul>
+
+    <h5 style="color: var(--gg-ink); margin-top: 16px;">🎨 For ARG & Puzzle Creators</h5>
+    <ul style="margin-left: 0; padding-left: 20px;">
+      <li>Create cryptograms to embed in your ARG or escape room</li>
+      <li>Test homophonic substitution ciphers (see below)</li>
+      <li>Use NQR Labs cipher fonts to create visually styled puzzles</li>
+      <li>Export keys and ciphertext for documentation or answer sheets</li>
+    </ul>
+
+    <h4 style="color: var(--gg-accent); margin-top: 20px;">Extended Character Set Mode</h4>
+    <p>
+      <strong>What is it?</strong><br>
+      By default, GlyphGrid works with standard cryptograms (A-Z uppercase only). When you enable
+      <strong>"Use Extended Character Set"</strong>, GlyphGrid supports 94 different cipher symbols:
+    </p>
+    <pre style="background: #0e1330; padding: 10px; border-radius: 6px; overflow-x: auto; font-size: 0.85em;">ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
+1234567890`~!@#$%^&*()-_=+[{]}\|;:'",&lt;.&gt;/?</pre>
+
+    <p>
+      <strong>Why use it?</strong>
+    </p>
+    <ul style="margin-left: 0; padding-left: 20px;">
+      <li>
+        <strong>NQR Labs Cipher Fonts:</strong> Many cipher fonts from <a href="https://nqrlabs.com/arg-fonts/" target="_blank" style="color: var(--gg-accent);">NQR Labs</a>
+        use uppercase letters for the regular alphabet, while lowercase letters, numbers, and symbols display cipher glyphs.
+        Extended mode lets you paste text rendered in these fonts and solve it properly.
+      </li>
+      <li>
+        <strong>Homophonic Substitution Ciphers:</strong> These ciphers map <em>multiple</em> cipher symbols to the same plaintext letter
+        (e.g., <code>a</code> → <code>E</code>, <code>1</code> → <code>E</code>, <code>!</code> → <code>E</code>). This makes frequency
+        analysis harder and creates more secure ciphers. Extended mode fully supports many-to-one mappings.
+      </li>
+      <li>
+        <strong>Case-Sensitive Ciphers:</strong> <code>A</code> and <code>a</code> are treated as different cipher symbols,
+        allowing for more complex puzzles.
+      </li>
+    </ul>
+
+    <p>
+      <strong>How highlighting works in Extended Mode:</strong>
+    </p>
+    <ul style="margin-left: 0; padding-left: 20px;">
+      <li><strong style="color: #86a6ff;">Cyan outline:</strong> All slots with the <em>same cipher symbol</em> (e.g., all <code>a</code> slots)</li>
+      <li><strong style="color: #67f5a8;">Green outline:</strong> All slots with the <em>same cleartext letter</em> (e.g., all slots mapped to <code>E</code>)</li>
+      <li>When you click a slot, you see <strong>both highlights</strong> simultaneously, making it easy to track homophonic patterns.</li>
+    </ul>
+
+    <h4 style="color: var(--gg-accent); margin-top: 20px;">Homophonic Substitution Ciphers</h4>
+    <p>
+      A <strong>homophonic substitution cipher</strong> is a type of cipher where one plaintext letter can be represented by
+      <em>multiple different cipher symbols</em>. This flattens the frequency distribution and makes traditional frequency analysis
+      much harder.
+    </p>
+    <p><strong>Example:</strong></p>
+    <pre style="background: #0e1330; padding: 10px; border-radius: 6px; overflow-x: auto; font-size: 0.85em;">Plaintext:  H E L L O
+Ciphertext: 3 a 9 ! 2
+
+Where both 'a' and '!' can represent 'E' and 'L'</pre>
+
+    <p>
+      <strong>GlyphGrid with Extended Mode</strong> lets you:
+    </p>
+    <ul style="margin-left: 0; padding-left: 20px;">
+      <li>Map multiple cipher symbols to the same plaintext letter</li>
+      <li>Encrypt plaintext with randomized symbol selection (e.g., <code>E</code> → randomly picks from <code>a</code>, <code>1</code>, <code>!</code>)</li>
+      <li>Visually track which cipher symbols share the same cleartext mapping</li>
+      <li>Analyze frequency across all unique symbols (not just A-Z)</li>
+    </ul>
+
+    <h4 style="color: var(--gg-accent); margin-top: 20px;">Keyboard Shortcuts</h4>
+    <ul style="margin-left: 0; padding-left: 20px;">
+      <li><strong>A-Z</strong> — Assign a plaintext letter to the focused cipher slot</li>
+      <li><strong>Space / Backspace / Delete</strong> — Clear the mapping for the focused slot</li>
+      <li><strong>← / →</strong> — Navigate between cipher slots</li>
+    </ul>
+
+    <h4 style="color: var(--gg-accent); margin-top: 20px;">Tips for Solving</h4>
+    <ul style="margin-left: 0; padding-left: 20px;">
+      <li><strong>Start with 1-letter words:</strong> Almost always "A" or "I"</li>
+      <li><strong>Look for common patterns:</strong> <code>THE</code>, <code>AND</code>, <code>ING</code>, <code>TION</code></li>
+      <li><strong>Check double letters:</strong> <code>LL</code>, <code>EE</code>, <code>SS</code>, <code>OO</code></li>
+      <li><strong>Use frequency analysis:</strong> In English, <code>E</code> is most common, followed by <code>T</code>, <code>A</code>, <code>O</code></li>
+      <li><strong>Toggle highlights:</strong> Bigram and trigram highlights reveal repeated sequences</li>
+      <li><strong>Work iteratively:</strong> Make educated guesses, refine as patterns emerge</li>
+    </ul>
+
+    <h4 style="color: var(--gg-accent); margin-top: 20px;">About NQR Labs</h4>
+    <p>
+      <strong>NQR Labs</strong> creates free tools and resources for puzzle designers, ARG creators, and cipher enthusiasts.
+      Check out <a href="https://nqrlabs.com/arg-fonts/" target="_blank" style="color: var(--gg-accent);">arg-fonts</a> for
+      downloadable cipher fonts designed for use in games, videos, and puzzles.
+    </p>
+
+    <h4 style="color: var(--gg-accent); margin-top: 20px;">Privacy & Offline Use</h4>
+    <p>
+      GlyphGrid runs entirely in your browser using JavaScript and Web APIs. No data is sent to any server.
+      You can even use it offline once the page has loaded. All files you save (keys, cleartext) are downloaded
+      directly to your computer.
+    </p>
+
+    <hr style="border-color: var(--gg-border); margin: 20px 0;">
+
+    <p style="text-align: center; color: var(--gg-ink-dim); font-size: 0.9em;">
+      <strong>Happy solving!</strong><br>
+      If you use GlyphGrid in your ARG or puzzle project, we'd love to hear about it.
+    </p>
+  </div>
 </div>
 
 <script>
@@ -517,6 +708,26 @@ function closeLicense() {
 licenseLink.addEventListener('click', openLicense);
 licenseOverlay.addEventListener('click', closeLicense);
 licenseClose.addEventListener('click', closeLicense);
+
+// Help modal behavior
+const btnShowHelp = document.getElementById('btnShowHelp');
+const helpOverlay = document.getElementById('helpOverlay');
+const helpModal = document.getElementById('helpModal');
+const helpClose = document.getElementById('helpClose');
+
+function openHelp() {
+  helpOverlay.classList.add('show');
+  helpModal.classList.add('show');
+}
+
+function closeHelp() {
+  helpOverlay.classList.remove('show');
+  helpModal.classList.remove('show');
+}
+
+btnShowHelp.addEventListener('click', openHelp);
+helpOverlay.addEventListener('click', closeHelp);
+helpClose.addEventListener('click', closeHelp);
 </script>
 
 
@@ -644,12 +855,162 @@ licenseClose.addEventListener('click', closeLicense);
     </div>
   </div>
 
+  <!-- Floating Help Modal (non-blocking) -->
+  <div id="panelHelp" class="panel-float" aria-hidden="true" aria-labelledby="helpTitle">
+    <div class="panel-header">
+      <h3 class="panel-title" id="helpTitle">GlyphGrid Help</h3>
+      <div class="d-flex gap-2">
+        <button class="btn btn-sm btn-outline-light" id="btnCloseHelp">Close</button>
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="row g-3">
+        <div class="col-12">
+          <h5>What is GlyphGrid?</h5>
+          <p>GlyphGrid is a manual cryptogram workbench designed for puzzle solvers and ARG creators. It provides intelligent mapping tools, live n-gram analysis, and English frequency hints to help you crack substitution ciphers.</p>
+        </div>
+
+        <div class="col-12">
+          <h5>Basic Usage</h5>
+          <ol>
+            <li><strong>Paste or type ciphertext</strong> into the Ciphertext section</li>
+            <li><strong>Click any slot</strong> in the grid below the ciphertext</li>
+            <li><strong>Type a letter (A-Z)</strong> to map the cipher symbol to that cleartext letter</li>
+            <li><strong>All matching cipher symbols</strong> update automatically everywhere</li>
+            <li><strong>Use arrow keys (← →)</strong> to navigate between slots</li>
+            <li><strong>Press Space, Backspace, or Delete</strong> to clear a mapping</li>
+          </ol>
+        </div>
+
+        <div class="col-12">
+          <h5>How It Works</h5>
+          <p>GlyphGrid maintains a <strong>substitution key</strong> where each cipher symbol maps to exactly one cleartext letter (in standard mode). When you assign a mapping, it applies to all occurrences of that cipher symbol throughout the puzzle.</p>
+          <p>The <strong>Alphabet bar</strong> shows which cleartext letters you've used (marked with ✓). The <strong>Key grid</strong> displays all current cipher-to-cleartext mappings.</p>
+        </div>
+
+        <div class="col-12">
+          <h5>Features</h5>
+          <ul>
+            <li><strong>Pattern Highlighting:</strong> Enable bigrams, trigrams, double letters, and word-length highlights to spot patterns</li>
+            <li><strong>Analysis Panel:</strong> View frequency tables, n-gram statistics, and solving tips</li>
+            <li><strong>Hints Panel:</strong> Access English letter frequencies, common bigrams/trigrams, and word-position tendencies</li>
+            <li><strong>Custom Fonts:</strong> Load cipher fonts (TTF/OTF/WOFF) or use system fonts</li>
+            <li><strong>Save/Load Keys:</strong> Export and import your cipher-to-cleartext mappings</li>
+            <li><strong>Generate Puzzles:</strong> Create cryptograms from your own text or use built-in themes</li>
+          </ul>
+        </div>
+
+        <div class="col-12">
+          <h5>Extended Character Set Mode</h5>
+          <p>When you enable <strong>"Use Extended Character Set"</strong>, GlyphGrid switches to a more advanced mode designed for complex ARG ciphers and cipher fonts.</p>
+
+          <h6 class="mt-3">Standard Mode vs. Extended Mode:</h6>
+          <table class="table table-sm table-bordered">
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th>Standard Mode</th>
+                <th>Extended Mode</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Cipher Symbols</td>
+                <td>A-Z only (case-insensitive)</td>
+                <td>A-Z, a-z, 0-9, and all punctuation</td>
+              </tr>
+              <tr>
+                <td>Cleartext Output</td>
+                <td>A-Z (uppercase)</td>
+                <td>A-Z (uppercase)</td>
+              </tr>
+              <tr>
+                <td>Mapping Type</td>
+                <td>One-to-one (bijection)</td>
+                <td>Many-to-one (multiple cipher symbols → same letter)</td>
+              </tr>
+              <tr>
+                <td>Punctuation</td>
+                <td>Treated as cipher symbols</td>
+                <td>Treated like spaces (disabled slots)</td>
+              </tr>
+              <tr>
+                <td>Case Sensitivity</td>
+                <td>No ('A' and 'a' are same)</td>
+                <td>Yes ('A' and 'a' are different cipher symbols)</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h6 class="mt-3">When to Use Extended Mode:</h6>
+          <ul>
+            <li><strong>Cipher fonts with multiple glyphs per letter:</strong> Some ARG cipher fonts map A, a, 1, and @ all to the letter "E"</li>
+            <li><strong>Case-sensitive ciphers:</strong> Uppercase and lowercase have different meanings</li>
+            <li><strong>Polyalphabetic-style puzzles:</strong> The same cleartext letter appears as different cipher symbols in different positions</li>
+            <li><strong>Complex steganography:</strong> Hidden messages where punctuation is decoration, not data</li>
+          </ul>
+
+          <h6 class="mt-3">Extended Mode Behavior:</h6>
+          <ul>
+            <li><strong>Dual highlighting:</strong> When you click a slot, you'll see TWO highlights:
+              <ul>
+                <li>Blue highlight: All slots with the same <em>cipher symbol</em></li>
+                <li>Green highlight (planned): All slots with the same <em>cleartext letter</em> (shows which other cipher symbols also map to this letter)</li>
+              </ul>
+            </li>
+            <li><strong>No cleartext conflicts:</strong> You can map multiple cipher symbols to the same cleartext letter without clearing previous mappings</li>
+            <li><strong>Dynamic key grid:</strong> The key shows only cipher symbols found in your ciphertext (not a fixed A-Z grid)</li>
+            <li><strong>Spaces always stay spaces:</strong> Regardless of mode, spaces create disabled slots</li>
+          </ul>
+
+          <h6 class="mt-3">Example Use Case:</h6>
+          <p>Imagine you have an ARG cipher font where:</p>
+          <ul>
+            <li>Uppercase letters A-Z are "normal" English</li>
+            <li>Lowercase letters a-z, numbers 0-9, and symbols are cipher glyphs</li>
+            <li>Multiple glyphs can represent the same letter (e.g., 'a', '1', '@' all mean "E")</li>
+          </ul>
+          <p>Enable Extended Character Set mode, paste the ciphertext, and start mapping. The key grid will show all unique symbols, and you can assign multiple symbols to the same cleartext letter.</p>
+        </div>
+
+        <div class="col-12">
+          <h5>Suggested Workflow</h5>
+          <ol>
+            <li>Start with the <strong>Hints</strong> panel to see English letter frequencies</li>
+            <li>Enable <strong>1-letter</strong> and <strong>2-letter word highlights</strong> - these are often "A", "I", and "IT", "IS", "TO"</li>
+            <li>Look for <strong>double letters</strong> (LL, EE, OO, SS, TT are common)</li>
+            <li>Map high-frequency cipher symbols to high-frequency English letters (E, T, A, O, I, N)</li>
+            <li>Use the <strong>Analysis</strong> panel to confirm your bigram/trigram guesses</li>
+            <li>Fill in the puzzle systematically, checking for words that make sense</li>
+          </ol>
+        </div>
+
+        <div class="col-12">
+          <h5>Keyboard Shortcuts</h5>
+          <ul>
+            <li><strong>Arrow Left/Right (← →):</strong> Navigate between slots</li>
+            <li><strong>A-Z:</strong> Assign cleartext mapping to focused slot</li>
+            <li><strong>Space/Backspace/Delete:</strong> Clear mapping for focused slot</li>
+          </ul>
+        </div>
+
+        <div class="col-12">
+          <h5>Privacy & Offline Use</h5>
+          <p>GlyphGrid runs entirely in your browser. No data is sent to any server. All processing happens locally, and you can use it offline after the initial page load.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
   "use strict";
   const A = "A".charCodeAt(0);
   const letters = Array.from({length:26}, (_,i)=>String.fromCharCode(A+i));
   const LETTER_RE = /[A-Za-z]/;
   const SLOT_SELECTOR = '.slot[data-cipher]';
+
+  // Extended character set: letters, digits, and symbols
+  const EXTENDED_CHARSET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890`~!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?";
 
   const state = {
     mapping: Object.fromEntries(letters.map(l=>[l, null])),
@@ -660,7 +1021,8 @@ licenseClose.addEventListener('click', closeLicense);
     _seed: null,
     highlights: { bigrams:false, trigrams:false, doubles:false, len1:false, len2:false, len3:false },
     analysisOpen:false,
-    solved: false
+    solved: false,
+    extendedCharset: false  // Extended character set mode
   };
 
   const els = {
@@ -690,15 +1052,19 @@ licenseClose.addEventListener('click', closeLicense);
     chkLen1: document.getElementById('chkLen1'),
     chkLen2: document.getElementById('chkLen2'),
     chkLen3: document.getElementById('chkLen3'),
+    chkExtendedCharset: document.getElementById('chkExtendedCharset'),
     // Panels & buttons
     panelAnalysis: document.getElementById('panelAnalysis'),
     panelHints: document.getElementById('panelHints'),
+    panelHelp: document.getElementById('panelHelp'),
     btnShowAnalysis: document.getElementById('btnShowAnalysis'),
     btnToggleAnalysisNav: document.getElementById('btnToggleAnalysisNav'),
     btnCloseAnalysis: document.getElementById('btnCloseAnalysis'),
     btnToggleHintsNav: document.getElementById('btnToggleHintsNav'),
     btnToggleHintsSection: document.getElementById('btnToggleHintsSection'),
     btnCloseHints: document.getElementById('btnCloseHints'),
+    btnHelp: document.getElementById('btnHelp'),
+    btnCloseHelp: document.getElementById('btnCloseHelp'),
     // Analysis content
     tipsList: document.getElementById('tipsList'),
     tblFreq: document.getElementById('tblFreq'),
@@ -732,26 +1098,69 @@ licenseClose.addEventListener('click', closeLicense);
   }
   function setAlphabetUsed(){
     els.alphabetRow.querySelectorAll('.alpha').forEach(el=>{
-      const L=el.dataset.letter; el.classList.toggle('used', state.reverse[L] !== null);
+      const L=el.dataset.letter;
+      if (state.extendedCharset) {
+        // Extended mode: check if array exists and has length > 0
+        el.classList.toggle('used', state.reverse[L] && Array.isArray(state.reverse[L]) && state.reverse[L].length > 0);
+      } else {
+        // Standard mode: check if not null
+        el.classList.toggle('used', state.reverse[L] !== null);
+      }
     });
   }
   function renderKey(){
     els.keyGrid.innerHTML='';
-    for(const l of letters){
-      const col=document.createElement('div'); col.className='paircol';
-      const top=document.createElement('div'); top.className='cell cell-cipher'; top.textContent=l;
-      const bottom=document.createElement('div'); bottom.className='cell cell-plain'; bottom.textContent=state.mapping[l]||'·';
-      col.append(top,bottom); els.keyGrid.appendChild(col);
-    }
-    els.pairList.innerHTML='';
-    for(const c of letters){
-      const p=state.mapping[c];
-      if(p){
-        const tag=document.createElement('span'); tag.className='pair';
-        tag.innerHTML = '<span class="c">'+c+'</span> → <b>'+p+'</b>';
-        els.pairList.appendChild(tag);
+
+    if (state.extendedCharset) {
+      // Extended mode: show all unique cipher symbols from ciphertext
+      const uniqueCipherSymbols = getUniqueCipherSymbols();
+      for(const cipher of uniqueCipherSymbols){
+        const col=document.createElement('div'); col.className='paircol';
+        const top=document.createElement('div'); top.className='cell cell-cipher'; top.textContent=cipher;
+        const bottom=document.createElement('div'); bottom.className='cell cell-plain'; bottom.textContent=state.mapping[cipher]||'·';
+        col.append(top,bottom); els.keyGrid.appendChild(col);
+      }
+
+      // Pair list in extended mode
+      els.pairList.innerHTML='';
+      for(const cipher of uniqueCipherSymbols){
+        const p=state.mapping[cipher];
+        if(p){
+          const tag=document.createElement('span'); tag.className='pair';
+          tag.innerHTML = '<span class="c">'+cipher+'</span> → <b>'+p+'</b>';
+          els.pairList.appendChild(tag);
+        }
+      }
+    } else {
+      // Standard mode: show fixed A-Z grid
+      for(const l of letters){
+        const col=document.createElement('div'); col.className='paircol';
+        const top=document.createElement('div'); top.className='cell cell-cipher'; top.textContent=l;
+        const bottom=document.createElement('div'); bottom.className='cell cell-plain'; bottom.textContent=state.mapping[l]||'·';
+        col.append(top,bottom); els.keyGrid.appendChild(col);
+      }
+      els.pairList.innerHTML='';
+      for(const c of letters){
+        const p=state.mapping[c];
+        if(p){
+          const tag=document.createElement('span'); tag.className='pair';
+          tag.innerHTML = '<span class="c">'+c+'</span> → <b>'+p+'</b>';
+          els.pairList.appendChild(tag);
+        }
       }
     }
+  }
+
+  // Get all unique cipher symbols from ciphertext (for extended mode)
+  function getUniqueCipherSymbols() {
+    const symbols = new Set();
+    for (const ch of state.cipherText) {
+      // Include any character that's in the extended charset
+      if (EXTENDED_CHARSET.includes(ch)) {
+        symbols.add(ch);
+      }
+    }
+    return Array.from(symbols).sort();
   }
 
   /* ---------- Grid ---------- */
@@ -759,9 +1168,29 @@ licenseClose.addEventListener('click', closeLicense);
     els.slotsGrid.innerHTML='';
     const txt=state.cipherText||'';
     for(let i=0;i<txt.length;i++){
-      const ch=txt[i]; const isLetter=LETTER_RE.test(ch); const cipher=ch.toUpperCase();
+      const ch=txt[i];
       const cell=document.createElement('div'); cell.className='chunk';
-      if(isLetter){
+
+      // Determine if this character should be a cipher slot
+      let isCipherChar = false;
+      let cipher = '';
+
+      if (state.extendedCharset) {
+        // Extended mode: all characters in EXTENDED_CHARSET are cipher characters
+        // Everything else (spaces, newlines, etc.) are treated as separators
+        if (EXTENDED_CHARSET.includes(ch)) {
+          isCipherChar = true;
+          cipher = ch;  // Preserve exact character in extended mode
+        }
+      } else {
+        // Standard mode: only letters are cipher characters
+        if (LETTER_RE.test(ch)) {
+          isCipherChar = true;
+          cipher = ch.toUpperCase();  // Convert to uppercase in standard mode
+        }
+      }
+
+      if(isCipherChar){
         const slot=document.createElement('div');
         slot.className='slot'; slot.setAttribute('contenteditable','true'); slot.setAttribute('spellcheck','false');
         slot.dataset.cipher=cipher; slot.dataset.index=i;
@@ -795,7 +1224,27 @@ licenseClose.addEventListener('click', closeLicense);
     if(state.analysisOpen) runAnalysis();
   }
   function highlightSame(cipher,on){
+    // Highlight all slots with the same cipher symbol
     els.slotsGrid.querySelectorAll(`${SLOT_SELECTOR}[data-cipher="${cipher}"]`).forEach(el=>el.classList.toggle('same-c',on));
+
+    // In extended mode, also highlight all slots with the same cleartext letter
+    if (state.extendedCharset && on) {
+      const plaintext = state.mapping[cipher];
+      if (plaintext && state.reverse[plaintext]) {
+        // Get all cipher symbols that map to the same plaintext
+        const cipherSymbols = Array.isArray(state.reverse[plaintext])
+          ? state.reverse[plaintext]
+          : [state.reverse[plaintext]];
+
+        // Highlight all slots with those cipher symbols
+        cipherSymbols.forEach(c => {
+          els.slotsGrid.querySelectorAll(`${SLOT_SELECTOR}[data-cipher="${c}"]`).forEach(el=>el.classList.add('same-p'));
+        });
+      }
+    } else if (!on) {
+      // Clear all cleartext highlights when blur
+      els.slotsGrid.querySelectorAll('.same-p').forEach(el=>el.classList.remove('same-p'));
+    }
   }
   function placeCaretAtEnd(el){ const r=document.createRange(); r.selectNodeContents(el); r.collapse(false); const s=window.getSelection(); s.removeAllRanges(); s.addRange(r); }
   function refocus(el){ if(!el) return; el.focus({preventScroll:false}); placeCaretAtEnd(el); }
@@ -1745,16 +2194,92 @@ licenseClose.addEventListener('click', closeLicense);
   function encryptUpper(plaintext,key){
     let out=''; for(const ch of plaintext){ if(/[A-Za-z]/.test(ch)){ const u=ch.toUpperCase(); out += key[u] || u; } else out+=ch; } return out;
   }
-  function clearMappings(){ for(const l of letters){ state.mapping[l]=null; state.reverse[l]=null; } setAlphabetUsed(); renderKey(); document.querySelectorAll(SLOT_SELECTOR).forEach(el=>el.textContent=''); }
+
+  // Create extended character set key (many-to-one mapping)
+  function makeKeyExtended() {
+    // Create reverse mapping: each letter A-Z maps to array of cipher symbols
+    const extendedCharArray = EXTENDED_CHARSET.split('');
+    const symbolsPerLetter = Math.floor(extendedCharArray.length / 26);
+    const reverseKey = {};
+
+    // Shuffle extended characters
+    const shuffled = extendedCharArray.slice();
+    for(let i=shuffled.length-1; i>0; i--){
+      const j=Math.floor(Math.random()*(i+1));
+      [shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]];
+    }
+
+    // Distribute cipher symbols to letters
+    let idx = 0;
+    for (const letter of letters) {
+      reverseKey[letter] = [];
+      const count = symbolsPerLetter + (idx < extendedCharArray.length % 26 ? 1 : 0);
+      for (let i = 0; i < count && idx < shuffled.length; i++) {
+        reverseKey[letter].push(shuffled[idx++]);
+      }
+    }
+
+    return reverseKey;
+  }
+
+  // Encrypt with extended character set
+  function encryptExtended(plaintext, reverseKey) {
+    let out = '';
+    for (const ch of plaintext) {
+      if (/[A-Za-z]/.test(ch)) {
+        const u = ch.toUpperCase();
+        const cipherOptions = reverseKey[u];
+        if (cipherOptions && cipherOptions.length > 0) {
+          // Randomly pick one cipher symbol for this letter
+          const idx = Math.floor(Math.random() * cipherOptions.length);
+          out += cipherOptions[idx];
+        } else {
+          out += u;  // Fallback
+        }
+      } else {
+        out += ch;  // Preserve spaces and other characters
+      }
+    }
+    return out;
+  }
+
+  function clearMappings(){
+    if (state.extendedCharset) {
+      // Clear all existing mappings (dynamic)
+      state.mapping = {};
+      for(const l of letters){
+        state.reverse[l] = [];
+      }
+    } else {
+      // Standard mode
+      for(const l of letters){
+        state.mapping[l]=null;
+        state.reverse[l]=null;
+      }
+    }
+    setAlphabetUsed();
+    renderKey();
+    document.querySelectorAll(SLOT_SELECTOR).forEach(el=>el.textContent='');
+  }
 
   function surpriseGenerate(){
     const theme=els.makeTheme.value||'random';
     const diff=els.makeDiff.value||'medium';
     const plaintext=pickHiddenPlaintext(theme,diff);
-    const key=makeKey({ disallowSelfMaps: diff!=='easy' });
-    const cipher=encryptUpper(plaintext,key);
+
+    let cipher, key;
+    if (state.extendedCharset) {
+      const reverseKey = makeKeyExtended();
+      cipher = encryptExtended(plaintext, reverseKey);
+      key = reverseKey;
+    } else {
+      key = makeKey({ disallowSelfMaps: diff!=='easy' });
+      cipher = encryptUpper(plaintext, key);
+    }
+
     state.cipherText=cipher; els.cipherInput.value=cipher; clearMappings(); buildSlots(); refreshAll();
     state._hiddenPlaintext=plaintext; state._activeKey=key; state._seed=Math.floor(Math.random()*2**31); updateButtons();
+    state.solved=false;
     showToast("New cryptogram generated");
   }
 
@@ -1766,8 +2291,17 @@ licenseClose.addEventListener('click', closeLicense);
   function rekeySamePlaintext(){
     if(!state._hiddenPlaintext){ updateButtons(); return; }
     const diff=els.makeDiff.value||'medium';
-    const key=makeKey({ disallowSelfMaps: diff!=='easy' });
-    const cipher=encryptUpper(state._hiddenPlaintext,key);
+
+    let cipher, key;
+    if (state.extendedCharset) {
+      const reverseKey = makeKeyExtended();
+      cipher = encryptExtended(state._hiddenPlaintext, reverseKey);
+      key = reverseKey;
+    } else {
+      key = makeKey({ disallowSelfMaps: diff!=='easy' });
+      cipher = encryptUpper(state._hiddenPlaintext, key);
+    }
+
     state.cipherText=cipher; els.cipherInput.value=cipher; clearMappings(); buildSlots(); refreshAll();
     state._activeKey=key; state._seed=Math.floor(Math.random()*2**31); updateButtons();
     state.solved=false;
@@ -1777,8 +2311,17 @@ licenseClose.addEventListener('click', closeLicense);
     const pt=(els.myPlaintext.value||"").trim();
     if(!pt){ alert("Please paste or type your plaintext first."); return; }
     const diff=els.makeDiff.value||'medium';
-    const key=makeKey({ disallowSelfMaps: diff!=='easy' });
-    const cipher=encryptUpper(pt,key);
+
+    let cipher, key;
+    if (state.extendedCharset) {
+      const reverseKey = makeKeyExtended();
+      cipher = encryptExtended(pt, reverseKey);
+      key = reverseKey;
+    } else {
+      key = makeKey({ disallowSelfMaps: diff!=='easy' });
+      cipher = encryptUpper(pt, key);
+    }
+
     state.cipherText=cipher; els.cipherInput.value=cipher; clearMappings(); buildSlots(); refreshAll();
     state._hiddenPlaintext=pt; state._activeKey=key; state._seed=Math.floor(Math.random()*2**31); updateButtons();
     state.solved=false;
@@ -1787,11 +2330,55 @@ licenseClose.addEventListener('click', closeLicense);
 
   /* ---------- Mapping refresh ---------- */
   function assignMapping(cipher,plain){
+    if (state.extendedCharset) {
+      assignMappingExtended(cipher, plain);
+    } else {
+      assignMappingStandard(cipher, plain);
+    }
+  }
+
+  // Standard mode: one-to-one mapping (bijection)
+  function assignMappingStandard(cipher,plain){
     const prevPlain=state.mapping[cipher]; if(prevPlain===plain) return;
     if(plain){ const prevOwner=state.reverse[plain]; if(prevOwner && prevOwner!==cipher){ state.mapping[prevOwner]=null; state.reverse[plain]=null; } }
     state.mapping[cipher]=plain||null;
     if(prevPlain) state.reverse[prevPlain]=null;
     if(plain) state.reverse[plain]=cipher;
+  }
+
+  // Extended mode: many-to-one mapping
+  function assignMappingExtended(cipher, plain) {
+    const prevPlain = state.mapping[cipher];
+
+    // Update forward mapping
+    state.mapping[cipher] = plain || null;
+
+    // Update reverse mapping (array-based for extended mode)
+    if (prevPlain) {
+      // Remove cipher from old plaintext's array
+      if (Array.isArray(state.reverse[prevPlain])) {
+        const idx = state.reverse[prevPlain].indexOf(cipher);
+        if (idx !== -1) state.reverse[prevPlain].splice(idx, 1);
+        if (state.reverse[prevPlain].length === 0) state.reverse[prevPlain] = null;
+      } else if (state.reverse[prevPlain] === cipher) {
+        state.reverse[prevPlain] = null;
+      }
+    }
+
+    if (plain) {
+      // Add cipher to new plaintext's array
+      if (!state.reverse[plain]) {
+        state.reverse[plain] = [cipher];
+      } else if (Array.isArray(state.reverse[plain])) {
+        if (!state.reverse[plain].includes(cipher)) {
+          state.reverse[plain].push(cipher);
+        }
+      } else {
+        // Convert to array if it was a single value
+        const oldVal = state.reverse[plain];
+        state.reverse[plain] = [oldVal, cipher];
+      }
+    }
   }
   function refreshAll(){
     document.querySelectorAll(SLOT_SELECTOR).forEach(el=>{ const c=el.dataset.cipher; el.textContent=state.mapping[c]||''; });
@@ -1913,12 +2500,28 @@ licenseClose.addEventListener('click', closeLicense);
   }
 
   function analyzeFreq(){
-    const counts = Object.fromEntries(letters.map(l=>[l,0]));
-    for(const ch of (state.cipherText||'')){
-      if(/[A-Za-z]/.test(ch)){ counts[ch.toUpperCase()]++; }
+    let counts, arr, total;
+
+    if (state.extendedCharset) {
+      // Extended mode: count all EXTENDED_CHARSET symbols case-sensitively
+      counts = {};
+      for(const ch of (state.cipherText||'')){
+        if(EXTENDED_CHARSET.includes(ch)){
+          counts[ch] = (counts[ch] || 0) + 1;
+        }
+      }
+      total = Object.values(counts).reduce((a,b)=>a+b,0) || 1;
+      arr = Object.keys(counts).map(l => ({ l, n: counts[l], p: counts[l]*100/total })).sort((a,b)=>b.n - a.n);
+    } else {
+      // Standard mode: count uppercase letters only
+      counts = Object.fromEntries(letters.map(l=>[l,0]));
+      for(const ch of (state.cipherText||'')){
+        if(/[A-Za-z]/.test(ch)){ counts[ch.toUpperCase()]++; }
+      }
+      total = Object.values(counts).reduce((a,b)=>a+b,0) || 1;
+      arr = letters.map(l => ({ l, n: counts[l], p: counts[l]*100/total })).sort((a,b)=>b.n - a.n);
     }
-    const total = Object.values(counts).reduce((a,b)=>a+b,0) || 1;
-    const arr = letters.map(l => ({ l, n: counts[l], p: counts[l]*100/total })).sort((a,b)=>b.n - a.n);
+
     els.tblFreq.innerHTML='';
     arr.slice(0,10).forEach(row=>{
       const tr=document.createElement('tr');
@@ -2106,8 +2709,18 @@ licenseClose.addEventListener('click', closeLicense);
 
   document.getElementById('btnSaveKey').addEventListener('click', () => {
     let lines = ['Cipher text symbol = Clear text symbol'];
-    for (const [cipher, plain] of Object.entries(state.mapping)) {
-      if (plain) lines.push(`${cipher} = ${plain}`);
+    if (state.extendedCharset) {
+      // Extended mode: save all unique cipher symbols from ciphertext
+      const uniqueCipherSymbols = getUniqueCipherSymbols();
+      for (const cipher of uniqueCipherSymbols) {
+        const plain = state.mapping[cipher];
+        if (plain) lines.push(`${cipher} = ${plain}`);
+      }
+    } else {
+      // Standard mode: save A-Z
+      for (const [cipher, plain] of Object.entries(state.mapping)) {
+        if (plain) lines.push(`${cipher} = ${plain}`);
+      }
     }
     downloadTextFile('key.txt', lines.join('\n'));
   });
@@ -2120,34 +2733,45 @@ licenseClose.addEventListener('click', closeLicense);
   document.getElementById('keyFileInput').addEventListener('change', function() {
     const file = this.files[0];
     if (!file) return;
-  
+
     const reader = new FileReader();
     reader.onload = function(e) {
       const lines = e.target.result.split('\n');
       const mapping = {};
-  
+
       // Parse key.txt lines, ignoring the header
       lines.forEach(line => {
-        const match = line.match(/^\s*([A-Za-z])\s*=\s*([A-Za-z])\s*$/);
-        if (match) {
-          const cipher = match[1].toUpperCase();
-          const plain = match[2].toUpperCase();
-          mapping[cipher] = plain;
+        let match;
+        if (state.extendedCharset) {
+          // Extended mode: accept any single character as cipher symbol
+          match = line.match(/^\s*(.)\s*=\s*([A-Z])\s*$/);
+          if (match) {
+            const cipher = match[1];  // Preserve exact character
+            const plain = match[2];   // Already uppercase in file
+            mapping[cipher] = plain;
+          }
+        } else {
+          // Standard mode: only accept A-Z
+          match = line.match(/^\s*([A-Za-z])\s*=\s*([A-Za-z])\s*$/);
+          if (match) {
+            const cipher = match[1].toUpperCase();
+            const plain = match[2].toUpperCase();
+            mapping[cipher] = plain;
+          }
         }
       });
-  
+
       // Apply mapping to existing slots
       const slots = document.querySelectorAll(SLOT_SELECTOR);
       slots.forEach(slot => {
-        const cipher = slot.dataset.cipher.toUpperCase();
+        const cipher = state.extendedCharset ? slot.dataset.cipher : slot.dataset.cipher.toUpperCase();
         if (mapping[cipher]) {
-          slot.textContent = mapping[cipher];
-          state.mapping[cipher] = mapping[cipher];
-          renderKey();
+          assignMapping(cipher, mapping[cipher]);
         }
       });
-  
-      alert('Key loaded and applied!');
+
+      refreshAll();
+      showToast('Key loaded and applied!');
     };
   
     reader.readAsText(file);
@@ -2195,6 +2819,37 @@ bindHighlightToggle(els.chkDoubles, 'doubles');
 bindHighlightToggle(els.chkLen1, 'len1');
 bindHighlightToggle(els.chkLen2, 'len2');
 bindHighlightToggle(els.chkLen3, 'len3');
+
+  // Extended character set mode toggle
+  function switchExtendedMode(enabled) {
+    // If switching modes with an active puzzle, confirm first
+    const hasActivePuzzle = state.cipherText && Object.values(state.mapping).some(v => v);
+    if (hasActivePuzzle && state.extendedCharset !== enabled) {
+      if (!confirm("Switching modes will clear your current puzzle and mappings. Continue?")) {
+        // User cancelled - revert checkbox
+        els.chkExtendedCharset.checked = state.extendedCharset;
+        return;
+      }
+    }
+
+    // Update mode
+    state.extendedCharset = enabled;
+
+    // Clear all mappings and reset reverse mapping structure
+    clearMappings();
+
+    // Rebuild everything with the new mode
+    buildSlots();
+    refreshAll();
+    updateButtons();
+
+    // Show toast notification
+    showToast(enabled ? "Extended character set mode enabled" : "Standard mode enabled");
+  }
+
+  els.chkExtendedCharset.addEventListener('change', () => {
+    switchExtendedMode(els.chkExtendedCharset.checked);
+  });
 
   // Generator buttons
   els.btnSurprise.addEventListener('click', surpriseGenerate);
