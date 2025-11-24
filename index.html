@@ -92,6 +92,7 @@
 
     html,body{height:100%}
     body{
+      margin:0;
       font-family: var(--font-family-sans-serif);
       background: var(--gg-bg);
       color: var(--gg-ink);
@@ -105,6 +106,7 @@
       border: 1px solid var(--gg-border);
       border-radius: 14px;
       box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      box-sizing:border-box;
     }
     .gg-badge{ background:#1a2147; color:#a6b6f0; border:1px solid var(--gg-border) }
     .gg-muted{ color: var(--gg-ink-dim) }
@@ -223,18 +225,24 @@
 
     /* FOOTER / LICENSE (from template) */
     .license-footer {
+      border-top: 2px solid #b9c6ef33;
       margin-top: 10px;
-      margin-bottom: 20px;
+      margin-bottom: 0px;
       padding: 10px 8px;
       font-size: 0.68rem;
       color: var(--dim);
       opacity: 0.7;
-      cursor: pointer;
-      transition: opacity 0.15s ease;
+      transition: opacity 0.3s ease;
       text-align: center;
     }
+    .license-footer a {
+      cursor: pointer;
+      text-decoration: none;
+    }
     
-    .license-footer:hover {
+    .license-footer a:hover {
+      color: #67f5a8;
+      text-decoration: underline;
       opacity: 1;
     }
     
@@ -243,6 +251,7 @@
       position: fixed;
       inset: 0;
       background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
       z-index: 999;
     }
     
@@ -328,12 +337,12 @@
     }
 
     /* ============================================================================
-       UTILITY CLASSES (Replacing Bootstrap)
+       UTILITY CLASSES
        ============================================================================ */
 
     /* Container */
     .container-lg {
-      width: 100%;
+      width: auto;
       max-width: 1180px;
       margin-left: auto;
       margin-right: auto;
@@ -818,21 +827,28 @@
 
     <p class="text-secondary small mb-5">Note: Everything happens locally in your browser.</p>
     
-  </main>
 
-<!-- FOOTER / LICENSE (from template) -->
-<footer class="license-footer" id="licenseLink">
-  MIT License • Developed by NQR • Click to view
-</footer>
+    <!-- FOOTER / LICENSE (from template) -->
+    <footer class="license-footer">
+      <a href="https://youtube.com/@CLU-NQR" target="_blank">YouTube</a> &middot;
+      <a href="https://discord.gg/HT9YE8rvuN" target="_blank">Discord</a> &middot;
+      <a href="https://nqrlabs.com" target="_blank">NQR Labs</a> &middot;
+      <a href="https://github.com/NQRLabs" target="_blank">GitHub</a>
+      <br>
+      &copy; 2025 NQR &middot; <a id="licenseLink">License</a>
+    </footer>
+  </main>
 
 <div class="license-overlay" id="licenseOverlay"></div>
 <div class="license-modal" id="licenseModal" role="dialog" aria-modal="true" aria-labelledby="licenseTitle">
   <div class="license-modal-header">
-    <h3 class="license-modal-title" id="licenseTitle">MIT License</h3>
+    <h3 class="license-modal-title" id="licenseTitle">GlyphGrid License</h3>
     <span class="license-modal-close" id="licenseClose" aria-label="Close license dialog">&times;</span>
   </div>
-  <pre class="small-muted" style="text-align:center; white-space:pre-wrap; margin-top:14px;">
-Copyright (c) 2025 NQR
+  <pre class="small-muted" style="white-space:pre-wrap; margin-top:14px;">
+GlyphGrid - MIT License
+
+Copyright &copy; 2025 NQR
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
@@ -840,18 +856,18 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-------------------------------------------------------------
+<hr>
 Third-Party Components
-------------------------------------------------------------
+----------------------
 
 This project uses the following open-source resources, each distributed under permissive licenses compatible with the MIT License:
 
-- Google Fonts (Noto family, optional) © Google  
+- Google Fonts (Noto family, optional) &copy; Google  
   Licensed under the SIL Open Font License 1.1  
   <a href="https://scripts.sil.org/OFL" target="_blank">https://scripts.sil.org/OFL</a>
   <a href="https://fonts.google.com/specimen/Noto+Sans" target="_blank">https://fonts.google.com/specimen/Noto+Sans</a>
 
-- FontFace API usage examples © Mozilla Contributors  
+- FontFace API usage examples &copy; Mozilla Contributors  
   Licensed under the CC-BY-SA 2.5 License  
   <a href="https://developer.mozilla.org/en-US/docs/Web/API/FontFace" target="_blank">https://developer.mozilla.org/en-US/docs/Web/API/FontFace</a>
   <a href="https://creativecommons.org/licenses/by-sa/2.5/" target="_blank">https://creativecommons.org/licenses/by-sa/2.5/</a>
