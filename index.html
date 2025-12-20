@@ -158,6 +158,7 @@
     }
 
     .grid{ display:flex; flex-wrap:wrap; gap:.6rem; align-items:flex-end; }
+    .word-group{ display:flex; gap:.6rem; align-items:flex-end; flex-wrap:nowrap; }
     .chunk{ display:grid; gap:.3rem; justify-items:center; align-items:center; }
     .slot{
       width:44px; height:52px; display:grid; place-items:center;
@@ -1530,6 +1531,11 @@ helpClose.addEventListener('click', closeHelp);
   function buildSlots(){
     els.slotsGrid.innerHTML='';
     const txt=state.cipherText||'';
+
+    // Group characters into words to prevent breaking across lines
+    let wordGroup = null;
+    let lastWasSeparator = true;
+
     for(let i=0;i<txt.length;i++){
       const ch=txt[i];
       const cell=document.createElement('div'); cell.className='chunk';
@@ -1552,6 +1558,23 @@ helpClose.addEventListener('click', closeHelp);
           cipher = ch.toUpperCase();  // Convert to uppercase in standard mode
         }
       }
+
+      // Check if this is a word separator (space, newline, or other non-letter character that's not a cipher char)
+      const isSeparator = !isCipherChar && (ch === ' ' || ch === '\n' || ch === '\r' || ch === '\t');
+
+      // Start a new word group if we're transitioning from separator to word character
+      if (!isSeparator && lastWasSeparator) {
+        wordGroup = document.createElement('div');
+        wordGroup.className = 'word-group';
+        els.slotsGrid.appendChild(wordGroup);
+      }
+
+      // If this is a separator or punctuation (non-cipher character), close the current word group
+      if (isSeparator || (!isCipherChar && !lastWasSeparator)) {
+        wordGroup = null;
+      }
+
+      lastWasSeparator = isSeparator || !isCipherChar;
 
       if(isCipherChar){
         const slot=document.createElement('div');
@@ -1581,7 +1604,13 @@ helpClose.addEventListener('click', closeHelp);
         const frozen=document.createElement('div'); frozen.className='slot lock'; frozen.textContent=ch; frozen.setAttribute('aria-hidden','true'); cell.appendChild(frozen);
         const under=document.createElement('div'); under.className='under'; under.innerHTML='&nbsp;'; cell.appendChild(under);
       }
-      els.slotsGrid.appendChild(cell);
+
+      // Append to word group if we have one, otherwise append to grid
+      if (wordGroup) {
+        wordGroup.appendChild(cell);
+      } else {
+        els.slotsGrid.appendChild(cell);
+      }
     }
     applyHighlights();
     if(state.analysisOpen) runAnalysis();
