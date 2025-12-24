@@ -1052,6 +1052,22 @@ Where both 'a' and '!' can represent 'E' and 'L'</pre>
   </div>
 </div>
 
+<!-- SAVE CLEARTEXT MODAL -->
+<div class="license-overlay" id="saveCleartextOverlay"></div>
+<div class="license-modal" id="saveCleartextModal" role="dialog" aria-modal="true" aria-labelledby="saveCleartextTitle" style="max-width: 420px;">
+  <div class="license-modal-header">
+    <h3 class="license-modal-title" id="saveCleartextTitle">Save Cleartext</h3>
+    <span class="license-modal-close" id="saveCleartextClose" aria-label="Close save cleartext dialog">&times;</span>
+  </div>
+  <div style="padding: 20px; text-align: center;">
+    <p style="margin-bottom: 20px; color: var(--gg-ink-dim);">Choose how to save your cleartext:</p>
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <button id="btnSaveToClipboard" class="btn btn-primary btn-lg" style="width: 100%;">Copy to Clipboard</button>
+      <button id="btnSaveToFile" class="btn btn-success btn-lg" style="width: 100%;">Save to File</button>
+    </div>
+  </div>
+</div>
+
 <script>
 
 // License modal behavior (from template)
@@ -1093,6 +1109,24 @@ function closeHelp() {
 btnShowHelp.addEventListener('click', openHelp);
 helpOverlay.addEventListener('click', closeHelp);
 helpClose.addEventListener('click', closeHelp);
+
+// Save cleartext modal behavior
+const saveCleartextOverlay = document.getElementById('saveCleartextOverlay');
+const saveCleartextModal = document.getElementById('saveCleartextModal');
+const saveCleartextClose = document.getElementById('saveCleartextClose');
+
+function openSaveCleartextModal() {
+  saveCleartextOverlay.classList.add('show');
+  saveCleartextModal.classList.add('show');
+}
+
+function closeSaveCleartextModal() {
+  saveCleartextOverlay.classList.remove('show');
+  saveCleartextModal.classList.remove('show');
+}
+
+saveCleartextOverlay.addEventListener('click', closeSaveCleartextModal);
+saveCleartextClose.addEventListener('click', closeSaveCleartextModal);
 </script>
 
 
@@ -3076,8 +3110,8 @@ helpClose.addEventListener('click', closeHelp);
     URL.revokeObjectURL(a.href);
   }
   
-  document.getElementById('btnSaveCleartext').addEventListener('click', () => {
-    // Select all slots, including spaces and punctuation
+  // Function to get cleartext from slots
+  function getCleartext() {
     const slots = document.querySelectorAll('.slot');
     let cleartext = '';
 
@@ -3096,7 +3130,29 @@ helpClose.addEventListener('click', closeHelp);
       }
     });
 
+    return cleartext;
+  }
+
+  document.getElementById('btnSaveCleartext').addEventListener('click', () => {
+    openSaveCleartextModal();
+  });
+
+  // Save to clipboard button
+  document.getElementById('btnSaveToClipboard').addEventListener('click', () => {
+    const cleartext = getCleartext();
+    navigator.clipboard.writeText(cleartext).then(() => {
+      closeSaveCleartextModal();
+    }).catch(err => {
+      console.error('Failed to copy to clipboard:', err);
+      alert('Failed to copy to clipboard. Please try again.');
+    });
+  });
+
+  // Save to file button
+  document.getElementById('btnSaveToFile').addEventListener('click', () => {
+    const cleartext = getCleartext();
     downloadTextFile('message.txt', cleartext);
+    closeSaveCleartextModal();
   });
 
   document.getElementById('btnSaveKey').addEventListener('click', () => {
