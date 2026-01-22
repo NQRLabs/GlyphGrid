@@ -84,6 +84,7 @@
       --gg-outline:#86a6ff;
       --gg-border:#2b3868;
       --cipher-font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      --cipher-font-size: 0.9rem;
       --font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
       --hl-bigram:#ffd54f; --hl-trigram:#ff8a65; --hl-double:#81c784; --hl-len1:#4fc3f7; --hl-len2:#64b5f6; --hl-len3:#7986cb;
       scrollbar-width: thin; 
@@ -118,7 +119,7 @@
       background:#0e1330; color:#fbfcff; border:1px dashed var(--gg-border);
       border-radius: 12px; padding: 12px 14px;
     }
-    .cipher-input{ font-family: var(--cipher-font); }
+    .cipher-input{ font-family: var(--cipher-font); font-size: var(--cipher-font-size); }
     .plain-input{ font-family: inherit; }
 
     input[type="file"]::file-selector-button {
@@ -171,8 +172,8 @@
     .slot.same-p{ box-shadow: inset 0 0 0 2px #67f5a8; }
     .slot.same-c.same-p{ box-shadow: inset 0 0 0 2px var(--gg-outline), inset 0 0 0 4px #67f5a8; }
     .slot.lock{ opacity:.85; font-family: inherit; color:#e6ebff; }
-    .under{ font-size: .9rem; letter-spacing: .2rem; color:#a9b8ef; font-family: var(--cipher-font); }
-    .cipher-char{ color:#a9b8ef; font-family: var(--cipher-font); }
+    .under{ font-size: var(--cipher-font-size); letter-spacing: .2rem; color:#a9b8ef; font-family: var(--cipher-font); }
+    .cipher-char{ color:#a9b8ef; font-family: var(--cipher-font); font-size: var(--cipher-font-size); }
 
     @media (max-width: 600px){
       .slot{ width:38px; height:48px; font-size: 20px; }
@@ -184,10 +185,10 @@
     .kgrid{ display:grid; grid-template-columns: repeat(26, 1fr); gap:.4rem; }
     .paircol{ display:grid; grid-template-rows:auto auto; gap:.4rem; }
     .cell{ height: 36px; display:grid; place-items:center; border-radius: .6rem; background:#10173b; border:1px solid #2a3462; color:#ffffff; font-weight:700; }
-    .cell-cipher{ font-family: var(--cipher-font); color:#cfe1ff; font-weight:600; }
+    .cell-cipher{ font-family: var(--cipher-font); font-size: var(--cipher-font-size); color:#cfe1ff; font-weight:600; }
     .pairlist{ display:flex; flex-wrap:wrap; gap:.4rem; }
     .pair{ background:#0f1432; border:1px solid var(--gg-border); border-radius: 999px; padding:.35rem .6rem; color:#dce7ff; }
-    .pair .c{ opacity:.7; font-family: var(--cipher-font); }
+    .pair .c{ opacity:.7; font-family: var(--cipher-font); font-size: var(--cipher-font-size); }
 
     @media (max-width: 768px){
       .kgrid{ grid-template-columns: repeat(13, 1fr); }
@@ -760,6 +761,16 @@
               <div class="d-flex align-items-center gap-1">
                 <label class="small text-secondary me-1">Load</label>
                 <input id="cipherFontFile" class="form-control form-control-sm" type="file" accept=".ttf,.otf,.woff,.woff2">
+              </div>
+            </div>
+            <div class="col-12 col-md-auto">
+              <div class="d-flex align-items-center gap-1">
+                <button id="increaseFontSize" class="btn btn-sm btn-outline-secondary" type="button" title="Increase cipher font size" style="padding: 0.25rem 0.5rem;">
+                  <span style="font-size: 1rem;">A</span><span style="font-size: 0.9rem;">↑</span>
+                </button>
+                <button id="decreaseFontSize" class="btn btn-sm btn-outline-secondary" type="button" title="Decrease cipher font size" style="padding: 0.25rem 0.5rem;">
+                  <span style="font-size: 0.8rem;">A</span><span style="font-size: 0.7rem;">↓</span>
+                </button>
               </div>
             </div>
           </div>
@@ -1443,6 +1454,8 @@ saveCleartextClose.addEventListener('click', closeSaveCleartextModal);
     fontSelect: document.getElementById('cipherFontSelect'),
     fontCustom: document.getElementById('cipherFontCustom'),
     fontFile: document.getElementById('cipherFontFile'),
+    increaseFontSize: document.getElementById('increaseFontSize'),
+    decreaseFontSize: document.getElementById('decreaseFontSize'),
     // Analysis toggles
     chkBigrams: document.getElementById('chkBigrams'),
     chkTrigrams: document.getElementById('chkTrigrams'),
@@ -1682,6 +1695,10 @@ saveCleartextClose.addEventListener('click', closeSaveCleartextModal);
 
   /* ---------- Fonts ---------- */
   function setCipherFont(fontFamily){ document.documentElement.style.setProperty('--cipher-font', fontFamily); try{ localStorage.setItem('cipherFont', fontFamily);}catch(e){} }
+  function getCipherFontSize(){ const s=getComputedStyle(document.documentElement).getPropertyValue('--cipher-font-size').trim(); return parseFloat(s)||0.9; }
+  function setCipherFontSize(rem){ document.documentElement.style.setProperty('--cipher-font-size', rem+'rem'); try{ localStorage.setItem('cipherFontSize', rem);}catch(e){} }
+  function increaseCipherFontSize(){ const current=getCipherFontSize(); const newSize=Math.min(current+0.1, 3.0); setCipherFontSize(newSize); }
+  function decreaseCipherFontSize(){ const current=getCipherFontSize(); const newSize=Math.max(current-0.1, 0.3); setCipherFontSize(newSize); }
   async function loadCustomFontFromFile(file){
     if(!file) return;
     const base=file.name.replace(/\.(ttf|otf|woff2?|TTF|OTF|WOFF2?)$/,'');
@@ -3228,9 +3245,12 @@ saveCleartextClose.addEventListener('click', closeSaveCleartextModal);
   
   // Font controls
   try{ const savedFont=localStorage.getItem('cipherFont'); if(savedFont) setCipherFont(savedFont);}catch(e){}
+  try{ const savedSize=localStorage.getItem('cipherFontSize'); if(savedSize) setCipherFontSize(parseFloat(savedSize));}catch(e){}
   els.fontSelect.addEventListener('change', ()=>{ const val=els.fontSelect.value; if(val==='__custom__'){ const custom=els.fontCustom.value.trim(); if(custom) setCipherFont(custom); } else setCipherFont(val); });
   els.fontCustom.addEventListener('change', ()=>{ const custom=els.fontCustom.value.trim(); if(custom){ setCipherFont(custom); els.fontSelect.value='__custom__'; } });
   els.fontFile.addEventListener('change', async ()=>{ const file=els.fontFile.files && els.fontFile.files[0]; if(file){ try{ await loadCustomFontFromFile(file);}catch(err){ console.error(err); alert('Could not load that font file. Try ttf/otf/woff/woff2.'); } } });
+  els.increaseFontSize.addEventListener('click', ()=>{ increaseCipherFontSize(); });
+  els.decreaseFontSize.addEventListener('click', ()=>{ decreaseCipherFontSize(); });
 
   // Panels (non-blocking)
   function toggle(el, show){
