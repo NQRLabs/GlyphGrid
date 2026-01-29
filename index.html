@@ -2968,7 +2968,7 @@ saveCleartextClose.addEventListener('click', closeSaveCleartextModal);
     els.tblFreq.innerHTML='';
     arr.slice(0,10).forEach(row=>{
       const tr=document.createElement('tr');
-      tr.innerHTML = '<td>'+row.l+'</td><td class="text-end">'+row.n+'</td><td class="text-end">'+row.p.toFixed(1)+'%</td>';
+      tr.innerHTML = '<td><span class="cipher-char">'+row.l+'</span></td><td class="text-end">'+row.n+'</td><td class="text-end">'+row.p.toFixed(1)+'%</td>';
       els.tblFreq.appendChild(tr);
     });
     return arr;
@@ -2988,9 +2988,9 @@ saveCleartextClose.addEventListener('click', closeSaveCleartextModal);
     container.innerHTML = items.length ? "" : '<span class="text-secondary small">No repeating items</span>';
     items.forEach(x => {
       const s = document.createElement('span');
-      s.textContent = x.gram + ' ×' + x.count;
       s.className = 'badge rounded-pill text-bg-info-subtle text-info-emphasis';
       s.style.cursor = 'pointer';
+      s.innerHTML = '<span class="cipher-char">'+x.gram+'</span> ×' + x.count;
       s.addEventListener('click', ()=> flashGram(x.gram));
       container.appendChild(s);
     });
