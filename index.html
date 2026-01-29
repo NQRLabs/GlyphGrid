@@ -3056,14 +3056,14 @@ saveCleartextClose.addEventListener('click', closeSaveCleartextModal);
     }
     if(freq.length && freq[0].n > 0){
       const top = freq[0].l;
-      tips.push(`Cipher letter <b>${top}</b> is the most frequent — in English, <b>E</b> is often most common; also <b>T, A, O, I, N</b> are high.`);
+      tips.push(`Cipher letter <b><span class="cipher-char">${top}</span></b> is the most frequent — in English, <b>E</b> is often most common; also <b>T, A, O, I, N</b> are high.`);
     }
     if(bi.length){
-      const names = bi.slice(0,3).map(x=>x.gram + '×' + x.count).join(', ');
+      const names = bi.slice(0,3).map(x=>'<span class="cipher-char">' + x.gram + '</span>×' + x.count).join(', ');
       tips.push(`Repeating bigrams: <b>${names}</b>. Try <b>${HINT_BIGRAMS.slice(0,8).join('</b>, <b>')}</b>.`);
     }
     if(tri.length){
-      const names = tri.slice(0,3).map(x=>x.gram + '×' + x.count).join(', ');
+      const names = tri.slice(0,3).map(x=>'<span class="cipher-char">' + x.gram + '</span>×' + x.count).join(', ');
       tips.push(`Repeating trigrams: <b>${names}</b>. Test <b>${["THE","AND","ING","ION","TIO","FOR"].join('</b>, <b>')}</b>.`);
     }
     tips.push(`Word edges: common starts <b>${HINT_WORDPOS.start.slice(0,6).map(x=>x[0]).join('</b>, <b>')}</b>; endings <b>${HINT_WORDPOS.end.slice(0,6).map(x=>x[0]).join('</b>, <b>')}</b>.`);
